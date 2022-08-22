@@ -1,7 +1,7 @@
 # Machine Learning Engineer Nanodegree
 ## Capstone Proposal
-Joe Udacity  
-December 31st, 2050
+Jianming Pan  
+August 19th, 2022
 
 ## Proposal
 _(approx. 2-3 pages)_
@@ -9,12 +9,29 @@ _(approx. 2-3 pages)_
 ### Domain Background
 _(approx. 1-2 paragraphs)_
 
+Stock price prediction is always a challenging but attracting task. Various techniques have been tried to beat the market, but few succeed. The major task for stock price prediction is to fit a conditional distribution function of stock returns in the context of historical sample space. And then update the newest information to make estimation of stock's return and risk. By
+applying portfolio optimization to allocate limited resources on a trade-off between return and risk, we can make investment decision wisely and quantitatively.
+
+$$ \alpha $$
+
+
+\par First step, choose $\theta$ to minimize the prediction loss $L_0(\theta)$ in the context of $x, y \sim \mathcal{D}$
+	\begin{equation}
+		\underset{\theta}{\operatorname{minimize}} \quad L_0(\theta)=\mathbf{E}_{x, y \sim \mathcal{D}}\left[f\left(x, y ; \theta \right)\right]
+	\end{equation}
+	\par Second step, allocate resources to make decision $z$ minimizing the task loss $L_1(z)$ using predictions from the first step
+	\begin{equation}
+		z^{\star}(x ; \theta)=\underset{z}{\operatorname{argmin}} \, L_1(z) = \mathbf{E}_{y \sim p(y \mid x ; \theta)}[g(x, y, z)]
+	\end{equation}
+
+We sort the paradigm of stock price prediction as above
+
 In this section, provide brief details on the background information of the domain from which the project is proposed. Historical information relevant to the project should be included. It should be clear how or why a problem in the domain can or should be solved. Related academic research should be appropriately cited in this section, including why that research is relevant. Additionally, a discussion of your personal motivation for investigating a particular problem in the domain is encouraged but not required.
 
 ### Problem Statement
 _(approx. 1 paragraph)_
 
-In this section, clearly describe the problem that is to be solved. The problem described should be well defined and should have at least one relevant potential solution. Additionally, describe the problem thoroughly such that it is clear that the problem is quantifiable (the problem can be expressed in mathematical or logical terms) , measurable (the problem can be measured by some metric and clearly observed), and replicable (the problem can be reproduced and occurs more than once).
+In this section, clearly describe the problem that is to be solved. The problem described should be well-defined and should have at least one relevant potential solution. Additionally, describe the problem thoroughly such that it is clear that the problem is quantifiable (the problem can be expressed in mathematical or logical terms) , measurable (the problem can be measured by some metric and clearly observed), and replicable (the problem can be reproduced and occurs more than once).
 
 ### Datasets and Inputs
 _(approx. 2-3 paragraphs)_
