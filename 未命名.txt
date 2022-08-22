@@ -1,0 +1,60 @@
+\section{The Domain and Background of the Project}
+\par Stock price prediction is always a challenging but attracting task. Various techniques have been tried to conquer the market, but few succeed. The key component for stock price prediction task is to fit a conditional distribution function of stock returns in the context of historical data. And then input updated information to make a prediction of stock's return and risk. Based on estimated return and risk, we also need to utilize portfolio optimization to allocate resources on making investment decisions. 
+
+\par The difficulty of such tasks mostly lies in the low signal-to-noise-ratio (SNR) of stock market. Day-by-day transaction in the busy market generates huge amount of data, which is prefect for modern machine learning method. However, it usually takes great effort to extract the valuable part of such data. In this capstone project, I will built a Multi Precision Layer prediction model on the predefined features of stocks. By combining optimization method, the final model could output exact investment decision of any asset pools that customer interested.
+\section{The Problem Statement}
+\par As mentioned before, our major task is to train a model(function) $ F:R^{n\times m} \rightarrow R^{n}$, mapping $ n $ stocks with $ m $ features to their returns. To be clear, predicting stock price is the same as to predict stock return. Because we could choose a start time and set the stock price as $ P_0 $, and then at any time later than the start time. The price of stock is $ P_0(1+r) $, where $ r $ represents the return in the interval time. By this transformation, our data distributed more like independently. 
+\section{Dataset and Inputs}
+\par The data used in this project is from the open source Microsoft Qlib Dataset. One can use "pip install pyqlib" command in python console to obtain the qlib. And paste the following command in the terminal to download the dataset. 
+
+python scripts/get\_data.py qlib\_data --target\_dir ~/.qlib/qlib\_data/cn\_data --region cn
+
+\par The dataset named Alpha158 contains 158 pre-calculated features of corresponding stock in China's stock market from 2010-2020. The dataset has two indexs <datetime, instrument> and 158 columns of features. Features are defined as transformations of stock Close/High/Low/Open price and volume. For example, a feature could be made as the average past 3 days' close price.
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.5]{1.png}
+\caption{Example of Alpha158}
+\label{fig:1}
+\end{figure}
+\section{Solution Statement}
+\par I will construct a MLP model with one hidden layer to fit the conditional distribution of stock returns. The input of the data is randomly chose from a cross-section normal samplers, which could best average the distribution drift between batches and also retain the datetime feature of the data. The output of the model is the estimated return of each stock with a MSE loss function.
+\section{Benchmark Model}
+\par Traditional stock price prediction task uses a linear model to integral all stock features. So the benchmark of our model is the linear regression model. 
+
+\section{Evaluation Metrics}
+\par For all investment decision, backtest is the best way of determining which model performs better. We will make a backtest program to simulate the true investment environment. As for the metrics, annualized return (AR), sharpe ratio (SR), IC, IR, Maxdrawdown, and net value of simulated portfolio is all we need.
+\begin{equation}
+    AR = \sqrt{\prod_{i=1}^T(1+r)^i}^{T/252}
+\end{equation}
+\begin{equation}
+    SR = \frac{AR}{\sigma(r)}
+\end{equation}
+\begin{equation}
+    IR = SR = \frac{AR-benchmark}{\sigma(r)}
+\end{equation}
+\begin{equation}
+    Maxdrawdown = \max _{i < j}\left(r_{i}-r_{j}\right)
+\end{equation}
+
+\section{Project Design}
+\par The aim of this project is to train a model that helps investor make decisions on the stock market. By applying Machine Learning method, we could outperform the traditional method. To brief summary, the project is designed as follows:
+\par (1) Load the Alpha158 from qlib. All data imported as time-series data with pandas DataFrame type. Spilt train set, valid set and test set.
+\par (2) Built dataprocessor.py to process data before training. Make sure the process procedure is different in stage of learning and inference. Because we do not want to introduce future data in the inference stage, while in the learning stage, normalizing all distribution in each batches requires us to mix data together. Also, cross-section norm and NAN data should be included in this script.
+\par (3) Determine the hyperparameters of our model, specifically including batch\_size, learning rate, epoch. The net structure of the model is simple but powerful.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.5]{3.jpg}
+\caption{Net structure of the model with batch size of 128}
+\label{fig:2}
+\end{figure}
+\par (4) Basically, I will train 3 models. 2 listed above are Machine Learning model. And one for linear model as benchmark. The difference of above 2 models are the optimization layers. Optimization is the last part of investment decision. We will attain a prediction on tomorrow's stock price, but we need to decide how to allocate our money to buy them. For example, we cannot but the one that rises most according to prediction. Because it is risky, all outputs of stock-related information are random variables. So we should think carefully and make a trade-off between risk and return. 
+\par Traditionally, people uses a optimization method to determine which stock they would buy based on the information of prediction model. While this optimization method cannot fit in the procedure of machine learning because it is not differentiable. (Math Analysis would be included in the report) However, Agrawal, et al. (2019) came up with a convex problem solver called DPP, which makes the optimization differentiable. And I want to utilize this new method to modify existed MLP model.
+\par (5) After training, I will evaluate all this models' performance in backtest.py, which would compute the metrics listed above and give a fair comparison between all 3 models.
+
+\par (6) At last, we do hope to make a user-friendly interface to help interested investors make investment decision. I will upload all code to GitHub. Users may download their own data to train their models under the guidance of this project.
+
+\section{References}
+[1] https://github.com/microsoft/qlib.git 
+\newline
+[2] Agrawal A, Amos B, Barratt S, et al. Differentiable convex optimization layers[J]. Advances in neural information processing systems, 2019, 32.
